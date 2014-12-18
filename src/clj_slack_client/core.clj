@@ -7,14 +7,6 @@
   (:require [manifold.deferred :as deferred]))
 
 
-(def slack-api-base-url "http://slack.com/api")
-(def rtm-start-base-url (str slack-api-base-url "rtm.start"))
-
-(def abot-api-token "xoxb-3215140999-UuVgqNVwxMDcWNrVeoOMMtxw")
-(def someotherbot-api-token "xoxb-3246812512-FRBtlsTndTc2fGEhwq1rOhcD")
-(def tonyvanriet-api-token "xoxp-3215134233-3215134235-3216767432-ca2d3d")
-
-
 
 (def env (atom nil))
 
@@ -61,6 +53,14 @@
 ;
 ; connectivity
 ;
+
+(def slack-api-base-url "http://slack.com/api")
+(def rtm-start-base-url (str slack-api-base-url "rtm.start"))
+
+(def abot-api-token "xoxb-3215140999-UuVgqNVwxMDcWNrVeoOMMtxw")
+(def someotherbot-api-token "xoxb-3246812512-FRBtlsTndTc2fGEhwq1rOhcD")
+(def tonyvanriet-api-token "xoxp-3215134233-3215134235-3216767432-ca2d3d")
+
 
 (def heartbeating (atom false))
 
