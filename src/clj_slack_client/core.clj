@@ -15,29 +15,15 @@
 (def tonyvanriet-api-token "xoxp-3215134233-3215134235-3216767432-ca2d3d")
 
 
-(defn call-slack-web-api
-  ([method-name]
-   (call-slack-web-api method-name {}))
-  ([method-name params]
-   (let [method-url-base (str slack-api-base-url "/" method-name)]
-     (http/get method-url-base {:query-params params}))))
-
 
 (def env (atom nil))
 
-
-(defn store-environment
-  [rtm-start-response-body]
-  (swap! env (fn [_] rtm-start-response-body)))
+(def websocket-stream (atom nil))
 
 
-(defn call-rtm-start
-  [api-token]
-  (let [response (call-slack-web-api "rtm.start" {:token api-token})
-        response-body-json (:body response)
-        response-body (json/parse-string response-body-json true)]
-    response-body))
-
+;
+; messaging
+;
 
 (defn message-json
   [channel text]
@@ -46,15 +32,10 @@
                 :channel channel
                 :text text}))
 
-
 (def ping-json
   (json/encode {:id 1
                 :type "ping"}))
 
-
-(def websocket-stream (atom nil))
-
-(def heartbeating (atom false))
 
 
 (defn send-to-websocket
@@ -77,6 +58,13 @@
       (say-message (message-json (:channel event) "That's what she said")))))
 
 
+;
+; connectivity
+;
+
+(def heartbeating (atom false))
+
+
 (defn start-ping
   []
   (swap! heartbeating (fn [_] true))
@@ -90,6 +78,27 @@
 (defn stop-ping
   []
   (swap! heartbeating (fn [_] false)))
+
+
+(defn call-slack-web-api
+  ([method-name]
+   (call-slack-web-api method-name {}))
+  ([method-name params]
+   (let [method-url-base (str slack-api-base-url "/" method-name)]
+     (http/get method-url-base {:query-params params}))))
+
+
+(defn store-environment
+  [rtm-start-response-body]
+  (swap! env (fn [_] rtm-start-response-body)))
+
+
+(defn call-rtm-start
+  [api-token]
+  (let [response (call-slack-web-api "rtm.start" {:token api-token})
+        response-body-json (:body response)
+        response-body (json/parse-string response-body-json true)]
+    response-body))
 
 
 (defn connect
