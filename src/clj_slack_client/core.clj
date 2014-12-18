@@ -40,14 +40,25 @@
   (send-to-websocket message-json))
 
 
+(defn handle-message
+  [message-event]
+  (say-message (message-json (:channel message-event) "That's what she said")))
+
+(defn handle-channel-joined
+  [channel]
+  (swap! env #(assoc-in % [:channels] (conj (:channels %) channel))))
+
 (defn handle-slack-event
   [event-json]
   (let [event (json/parse-string event-json true)
         event-type (:type event)]
     (when (not= event-type "pong")
       (println event))
-    (when (= event-type "message")
-      (say-message (message-json (:channel event) "That's what she said")))))
+    (cond
+     (= event-type "message") (handle-message event)
+     (= event-type "channel_joined") (handle-channel-joined (:channel event)))))
+
+
 
 
 ;
