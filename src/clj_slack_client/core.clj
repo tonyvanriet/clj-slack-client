@@ -15,30 +15,28 @@
 (def tonyvanriet-api-token "xoxp-3215134233-3215134235-3216767432-ca2d3d")
 
 
-(defn call-slack-api
+(defn call-slack-web-api
   ([method-name]
-   (call-slack-api method-name {}))
+   (call-slack-web-api method-name {}))
   ([method-name params]
    (let [method-url-base (str slack-api-base-url "/" method-name)]
      (http/get method-url-base {:query-params params}))))
 
 
-(defn rtm-start
+(def env (atom nil))
+
+
+(defn store-environment
+  [rtm-start-response-body]
+  (swap! env (fn [_] rtm-start-response-body)))
+
+
+(defn call-rtm-start
   [api-token]
-  (let [response (call-slack-api "rtm.start" {:token api-token})
+  (let [response (call-slack-web-api "rtm.start" {:token api-token})
         response-body-json (:body response)
         response-body (json/parse-string response-body-json true)]
     response-body))
-
-
-(defn get-websocket-deferred
-  [api-token]
-  (let [ws-url (:url (rtm-start someotherbot-api-token))]
-    (aleph/websocket-client ws-url)))
-
-
-
-(def tonyvanriet-abot-dm-channel "D036B4503")
 
 
 (defn message-json
@@ -54,19 +52,14 @@
                 :type "ping"}))
 
 
-(def hihi-message-json (message-json tonyvanriet-abot-dm-channel "hihi"))
-
-
-(def websocket-stream nil)
-; want to use a dynamic var for websocket-stream but it's binding isn't visible
-; from the thread that slack events are received on (where handle-slack-event is called)
+(def websocket-stream (atom nil))
 
 (def heartbeating (atom false))
 
 
 (defn send-to-websocket
   [data-json]
-  (stream/put! websocket-stream data-json))
+  (stream/put! @websocket-stream data-json))
 
 
 (defn say-message
@@ -86,7 +79,7 @@
 
 (defn start-ping
   []
-  (swap! heartbeating (fn [hb] true))
+  (swap! heartbeating (fn [_] true))
   (future
     (loop []
       (Thread/sleep 5000)
@@ -96,20 +89,26 @@
 
 (defn stop-ping
   []
-  (swap! heartbeating (fn [hb] false)))
+  (swap! heartbeating (fn [_] false)))
 
 
 (defn connect
-  []
-  (def websocket-stream @(get-websocket-deferred someotherbot-api-token))
-    (start-ping)
-    (stream/consume handle-slack-event websocket-stream))
+  ([]
+   (connect someotherbot-api-token))
+  ([api-token]
+   (let [response-body (call-rtm-start api-token)
+         ws-url (:url response-body)
+         ws-stream @(aleph/websocket-client ws-url)]
+     (swap! websocket-stream (fn [_] ws-stream))
+     (store-environment response-body)
+     (start-ping)
+     (stream/consume handle-slack-event @websocket-stream))))
 
 
 (defn disconnect
   []
   (stop-ping)
-  (stream/close! websocket-stream))
+  (stream/close! @websocket-stream))
 
 
 
