@@ -40,25 +40,31 @@
   (send-to-websocket message-json))
 
 
-(defn handle-message
-  [message-event]
-  (say-message (message-json (:channel message-event) "That's what she said")))
+(defmulti handle-event :type)
 
-(defn handle-channel-joined
-  [channel]
-  (swap! env #(assoc-in % [:channels] (conj (:channels %) channel))))
 
-(defn handle-slack-event
+(defmethod handle-event "message"
+  [event]
+  (when (not= (:user event) (:id (:self @env)))
+    (say-message (message-json (:channel event) "That's what she said"))))
+
+
+(defmethod handle-event "channel_joined"
+  [event]
+  (swap! env #(assoc-in % [:channels] (conj (:channels %) (:channel event)))))
+
+
+(defmethod handle-event :default
+  [event]
+  nil)
+
+
+(defn handle-event-json
   [event-json]
   (let [event (json/parse-string event-json true)
         event-type (:type event)]
-    (when (not= event-type "pong")
-      (println event))
-    (cond
-     (= event-type "message") (handle-message event)
-     (= event-type "channel_joined") (handle-channel-joined (:channel event)))))
-
-
+    (when (not= event-type "pong") (println event))
+    (handle-event event)))
 
 
 ;
@@ -122,7 +128,7 @@
      (swap! websocket-stream (fn [_] ws-stream))
      (store-environment response-body)
      (start-ping)
-     (stream/consume handle-slack-event @websocket-stream))))
+     (stream/consume handle-event-json @websocket-stream))))
 
 
 (defn disconnect
