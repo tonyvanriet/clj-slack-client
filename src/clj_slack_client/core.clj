@@ -7,10 +7,22 @@
   (:require [manifold.deferred :as deferred]))
 
 
+(def websocket-stream (atom nil))
+
+
+;
+; environment
+;
 
 (def env (atom nil))
 
-(def websocket-stream (atom nil))
+
+(defn get-env-user
+  [user-id]
+  (->> @env
+       :users
+       (filter #(= (:id %) user-id))
+       first))
 
 
 ;
@@ -45,8 +57,13 @@
 
 (defmethod handle-event "message"
   [event]
-  (when (not= (:user event) (:id (:self @env)))
-    (say-message (message-json (:channel event) "That's what she said"))))
+  (let [user-id (:user event)
+        user (get-env-user user-id)
+        self-id (:id (:self @env))
+        channel-id (:channel event)]
+    (when (and (not= user-id self-id)
+               (not (:is_bot user)))
+      (say-message (message-json channel-id "That's what she said")))))
 
 
 (defmethod handle-event "channel_joined"
@@ -120,7 +137,7 @@
 
 (defn connect
   ([]
-   (connect someotherbot-api-token))
+   (connect abot-api-token))
   ([api-token]
    (let [response-body (call-rtm-start api-token)
          ws-url (:url response-body)
