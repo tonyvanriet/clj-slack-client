@@ -7,7 +7,8 @@
   (:require [manifold.deferred :as deferred]))
 
 
-(def websocket-stream (atom nil))
+;(def websocket-stream (atom nil))
+(def ^:dynamic *websocket-stream* nil)
 
 
 ;
@@ -44,7 +45,7 @@
 
 (defn send-to-websocket
   [data-json]
-  (stream/put! @websocket-stream data-json))
+  (stream/put! *websocket-stream* data-json))
 
 
 (defn say-message
@@ -142,16 +143,16 @@
    (let [response-body (call-rtm-start api-token)
          ws-url (:url response-body)
          ws-stream @(aleph/websocket-client ws-url)]
-     (swap! websocket-stream (fn [_] ws-stream))
+     (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))
      (store-environment response-body)
      (start-ping)
-     (stream/consume handle-event-json @websocket-stream))))
+     (stream/consume handle-event-json *websocket-stream*))))
 
 
 (defn disconnect
   []
   (stop-ping)
-  (stream/close! @websocket-stream))
+  (stream/close! *websocket-stream*))
 
 
 
