@@ -1,13 +1,12 @@
 (ns clj-slack-client.core
   (:gen-class)
-  (:require [clj-http.client :as http])
-  (:require [aleph.http :as aleph])
   (:require [cheshire.core :as json])
   (:require [manifold.stream :as stream])
-  (:require [manifold.deferred :as deferred]))
+  (:require [manifold.deferred])
+  (:require [byte-streams])
+  (:require [aleph.http :as aleph]))
 
 
-;(def websocket-stream (atom nil))
 (def ^:dynamic *websocket-stream* nil)
 
 
@@ -89,7 +88,7 @@
 ; connectivity
 ;
 
-(def slack-api-base-url "http://slack.com/api")
+(def slack-api-base-url "https://slack.com/api")
 (def rtm-start-base-url (str slack-api-base-url "rtm.start"))
 
 (def abot-api-token "xoxb-3215140999-UuVgqNVwxMDcWNrVeoOMMtxw")
@@ -120,7 +119,7 @@
    (call-slack-web-api method-name {}))
   ([method-name params]
    (let [method-url-base (str slack-api-base-url "/" method-name)]
-     (http/get method-url-base {:query-params params}))))
+     @(aleph/get method-url-base {:query-params params}))))
 
 
 (defn store-team-state
@@ -131,7 +130,8 @@
 (defn call-rtm-start
   [api-token]
   (let [response (call-slack-web-api "rtm.start" {:token api-token})
-        response-body-json (:body response)
+        response-body-bytes (:body response)
+        response-body-json (byte-streams/to-string response-body-bytes)
         response-body (json/parse-string response-body-json true)]
     response-body))
 
