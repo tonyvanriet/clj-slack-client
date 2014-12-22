@@ -15,12 +15,12 @@
 ; environment
 ;
 
-(def env (atom nil))
+(def team-state (atom nil))
 
 
-(defn get-env-user
+(defn get-team-user
   [user-id]
-  (->> @env
+  (->> @team-state
        :users
        (filter #(= (:id %) user-id))
        first))
@@ -59,8 +59,8 @@
 (defmethod handle-event "message"
   [event]
   (let [user-id (:user event)
-        user (get-env-user user-id)
-        self-id (:id (:self @env))
+        user (get-team-user user-id)
+        self-id (:id (:self @team-state))
         channel-id (:channel event)]
     (when (and (not= user-id self-id)
                (not (:is_bot user)))
@@ -69,7 +69,7 @@
 
 (defmethod handle-event "channel_joined"
   [event]
-  (swap! env #(assoc-in % [:channels] (conj (:channels %) (:channel event)))))
+  (swap! team-state #(assoc-in % [:channels] (conj (:channels %) (:channel event)))))
 
 
 (defmethod handle-event :default
@@ -123,9 +123,9 @@
      (http/get method-url-base {:query-params params}))))
 
 
-(defn store-environment
+(defn store-team-state
   [rtm-start-response-body]
-  (swap! env (fn [_] rtm-start-response-body)))
+  (swap! team-state (fn [_] rtm-start-response-body)))
 
 
 (defn call-rtm-start
@@ -144,7 +144,7 @@
          ws-url (:url response-body)
          ws-stream @(aleph/websocket-client ws-url)]
      (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))
-     (store-environment response-body)
+     (store-team-state response-body)
      (start-ping)
      (stream/consume handle-event-json *websocket-stream*))))
 
