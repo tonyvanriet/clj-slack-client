@@ -1,9 +1,10 @@
 (ns clj-slack-client.connectivity
   (:gen-class)
-  (:require [cheshire.core :as json])
-  (:require [manifold.stream :as stream])
-  (:require [byte-streams])
-  (:require [aleph.http :as aleph]))
+  (:require
+   [cheshire.core :as json]
+   [manifold.stream :as stream]
+   [byte-streams]
+   [aleph.http :as aleph]))
 
 
 (def ^:dynamic *websocket-stream* nil)
