@@ -46,6 +46,15 @@
   (swap! heartbeating (fn [_] false)))
 
 
+(defn get-api-response
+  "Takes a full http response map and returns the api response as a map."
+  [http-response]
+  (let [response-body-bytes (:body http-response)
+        response-body-json (byte-streams/to-string response-body-bytes)
+        api-response (json/parse-string response-body-json true)]
+    api-response))
+
+
 (defn call-slack-web-api
   ([method-name]
    (call-slack-web-api method-name {}))
@@ -56,11 +65,12 @@
 
 (defn call-rtm-start
   [api-token]
-  (let [response (call-slack-web-api "rtm.start" {:token api-token})
-        response-body-bytes (:body response)
-        response-body-json (byte-streams/to-string response-body-bytes)
-        response-body (json/parse-string response-body-json true)]
-    response-body))
+  (get-api-response (call-slack-web-api "rtm.start" {:token api-token})))
+
+
+(defn connect-websocket-stream
+  [ws-url]
+  @(aleph/websocket-client ws-url))
 
 
 (defn start-real-time
@@ -69,7 +79,7 @@
   ([api-token set-team-state handle-event-json]
    (let [response-body (call-rtm-start api-token)
          ws-url (:url response-body)
-         ws-stream @(aleph/websocket-client ws-url)]
+         ws-stream (connect-websocket-stream ws-url)]
      (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))
      (set-team-state response-body))
    (start-ping)
