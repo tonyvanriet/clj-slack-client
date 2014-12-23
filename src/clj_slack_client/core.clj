@@ -119,7 +119,7 @@
    (call-slack-web-api method-name {}))
   ([method-name params]
    (let [method-url-base (str slack-api-base-url "/" method-name)]
-     @(aleph/get method-url-base {:query-params params}))))
+     @(aleph/post method-url-base {:query-params params}))))
 
 
 (defn store-team-state
