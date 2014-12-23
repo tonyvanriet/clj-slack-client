@@ -1,7 +1,6 @@
 (ns clj-slack-client.core
   (:gen-class)
   (:require [cheshire.core :as json])
-  (:require [manifold.stream :as stream])
   (:require [clj-slack-client
              [team-state :as state]
              [connectivity :as conn]]))
@@ -59,8 +58,7 @@
 
 (defn connect
   []
-  (conn/start-real-time state/set-team-state)
-  (stream/consume handle-event-json conn/*websocket-stream*))
+  (conn/start-real-time state/set-team-state handle-event-json))
 
 
 (defn disconnect

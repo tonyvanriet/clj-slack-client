@@ -63,15 +63,16 @@
 
 
 (defn start-real-time
-  ([set-team-state-fn]
-   (start-real-time abot-api-token set-team-state-fn))
-  ([api-token set-team-state-fn]
+  ([set-team-state handle-event-json]
+   (start-real-time abot-api-token set-team-state handle-event-json))
+  ([api-token set-team-state handle-event-json]
    (let [response-body (call-rtm-start api-token)
          ws-url (:url response-body)
          ws-stream @(aleph/websocket-client ws-url)]
      (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))
-     (set-team-state-fn response-body)
-     (start-ping))))
+     (set-team-state response-body))
+   (start-ping)
+   (stream/consume handle-event-json *websocket-stream*)))
 
 
 (defn disconnect
