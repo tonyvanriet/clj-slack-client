@@ -6,7 +6,4 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [cheshire "5.4.0"]
                  [aleph "0.4.0-alpha9"]
-                 [byte-streams "0.2.0-alpha3"]]
-  :main ^:skip-aot clj-slack-client.core
-  :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+                 [byte-streams "0.2.0-alpha3"]])
