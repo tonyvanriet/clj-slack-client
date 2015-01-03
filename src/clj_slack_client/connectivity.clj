@@ -4,7 +4,10 @@
    [cheshire.core :as json]
    [manifold.stream :as stream]
    [byte-streams]
-   [aleph.http :as aleph]))
+   [aleph.http :as aleph]
+   [aleph.netty])
+  (:import
+   [io.netty.channel EventLoopGroup]))
 
 
 (def ^:dynamic *websocket-stream* nil)
@@ -89,7 +92,8 @@
 (defn disconnect
   []
   (stop-ping)
-  (stream/close! *websocket-stream*))
+  (stream/close! *websocket-stream*)
+  (.shutdownGracefully aleph.netty/client-group))
 
 
 
