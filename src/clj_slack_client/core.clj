@@ -9,8 +9,10 @@
 
 
 (defn connect
-  []
-  (conn/start-real-time state/set-team-state rx/handle-event-json))
+  [api-token]
+  (conn/start-real-time api-token
+                        state/set-team-state
+                        rx/handle-event-json))
 
 
 (defn disconnect

@@ -9,14 +9,8 @@
 
 (def ^:dynamic *websocket-stream* nil)
 
-
 (def slack-api-base-url "https://slack.com/api")
 (def rtm-start-base-url (str slack-api-base-url "rtm.start"))
-
-(def abot-api-token "xoxb-3215140999-UuVgqNVwxMDcWNrVeoOMMtxw")
-(def someotherbot-api-token "xoxb-3246812512-FRBtlsTndTc2fGEhwq1rOhcD")
-(def tonyvanriet-api-token "xoxp-3215134233-3215134235-3216767432-ca2d3d")
-
 
 (defn send-to-websocket
   [data-json]
@@ -74,8 +68,6 @@
 
 
 (defn start-real-time
-  ([set-team-state handle-event-json]
-   (start-real-time abot-api-token set-team-state handle-event-json))
   ([api-token set-team-state handle-event-json]
    (let [response-body (call-rtm-start api-token)
          ws-url (:url response-body)
