@@ -59,7 +59,9 @@
 
 (defn call-rtm-start
   [api-token]
-  (get-api-response (call-slack-web-api "rtm.start" {:token api-token})))
+  (->> {:token api-token}
+       (call-slack-web-api "rtm.start")
+       (get-api-response)))
 
 
 (defn connect-websocket-stream
