@@ -9,7 +9,8 @@
 
 
 (defn connect
-  [api-token]
+  [api-token host-event-handler]
+  (rx/attach-host-event-handler host-event-handler)
   (conn/start-real-time api-token
                         state/set-team-state
                         rx/handle-event-json))
@@ -17,4 +18,5 @@
 
 (defn disconnect
   []
-  (conn/disconnect))
+  (conn/disconnect)
+  (rx/close))
