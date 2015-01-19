@@ -6,8 +6,13 @@
    [cheshire.core :as json]))
 
 
+(def test-api-token (->> "test-api-token.txt"
+                         slurp
+                         clojure.string/trim))
+
 
 (deftest web-api-connectivity-test
+
   (testing "send web api.test, receive reply"
     (let [test-args {:foo "bar", :fizz "buzz"}
           http-response (call-slack-web-api "api.test" test-args)
@@ -22,7 +27,7 @@
 (deftest rtm-api-connectivity-test
 
   (testing "rtm.start response is ok"
-    (let [rtm-start-response (call-rtm-start abot-api-token)]
+    (let [rtm-start-response (call-rtm-start test-api-token)]
       (is (:ok rtm-start-response))
 
       (testing "websocket connection is successful"
