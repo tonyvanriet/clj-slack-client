@@ -3,9 +3,8 @@
    [clojure.test :refer :all]
    [clj-slack-client.connectivity :refer :all]
    [manifold.stream :as stream]
-   [cheshire.core :as json]
-   [aleph.http :as aleph]
-   ))
+   [cheshire.core :as json]))
+
 
 
 (deftest web-api-connectivity-test

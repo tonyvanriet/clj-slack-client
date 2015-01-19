@@ -1,7 +1,6 @@
 (ns clj-slack-client.core
   (:gen-class)
   (:require
-   [cheshire.core :as json]
    [clj-slack-client
     [team-state :as state]
     [connectivity :as conn]
