@@ -9,16 +9,16 @@
   (swap! state (fn [_] state-map)))
 
 
-(defn get-self
+(defn self
   []
   (:self @state))
 
 
-(defn get-user
-  [user-id]
+(defn id->user
+  [id]
   (->> @state
        :users
-       (filter #(= (:id %) user-id))
+       (filter #(= (:id %) id))
        first))
 
 
