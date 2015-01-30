@@ -8,11 +8,13 @@
    [manifold.stream :as stream]))
 
 
-(def host-event-stream (stream/stream 16))
+(def ^:dynamic *host-event-stream* nil)
+
 
 (defn attach-host-event-handler
   [handler]
-  (stream/consume handler host-event-stream))
+  (alter-var-root (var *host-event-stream*) (fn [_] (stream/stream 16)))
+  (stream/consume handler *host-event-stream*))
 
 
 (defmulti handle-event :type)
@@ -37,10 +39,10 @@
     (handle-event event)
     (when (not= event-type "pong")
       (println event)
-      (stream/put! host-event-stream event))))
+      (stream/put! *host-event-stream* event))))
 
 
 (defn close
   []
-  (stream/close! host-event-stream))
+  (stream/close! *host-event-stream*))
 

@@ -10,7 +10,7 @@
 (def ^:dynamic *websocket-stream* nil)
 
 (def slack-api-base-url "https://slack.com/api")
-(def rtm-start-base-url (str slack-api-base-url "rtm.start"))
+
 
 (defn send-to-websocket
   [data-json]
