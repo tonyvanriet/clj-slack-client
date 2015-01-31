@@ -19,7 +19,20 @@
   (->> @state
        :users
        (filter #(= (:id %) id))
-       first))
+       (first)))
+
+
+(defn id->channel
+  [id]
+  (->> @state
+       :channels
+       (filter #(= (:id %) id))
+       (first)))
+
+
+(defn dm?
+  [channel-id]
+  (.startsWith channel-id "D"))
 
 
 (defn channel-joined
