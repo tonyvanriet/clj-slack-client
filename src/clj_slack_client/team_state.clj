@@ -1,7 +1,7 @@
 (ns clj-slack-client.team-state)
 
 
-(def state (atom nil))
+(def ^:private state (atom nil))
 
 
 (defn set-team-state
@@ -9,12 +9,12 @@
   (swap! state (fn [_] state-map)))
 
 
-(defn self
+(defn- self
   []
   (:self @state))
 
 
-(defn id->user
+(defn- id->user
   [id]
   (->> @state
        :users
@@ -22,7 +22,7 @@
        (first)))
 
 
-(defn id->channel
+(defn- id->channel
   [id]
   (->> @state
        :channels
