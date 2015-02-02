@@ -30,6 +30,12 @@
        (first)))
 
 
+(defn bot?
+  [user-id]
+  (let [user (id->user user-id)]
+    (:is_bot user)))
+
+
 (defn dm?
   [channel-id]
   (.startsWith channel-id "D"))
