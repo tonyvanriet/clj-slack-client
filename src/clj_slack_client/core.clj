@@ -1,10 +1,10 @@
 (ns clj-slack-client.core
   (:gen-class)
   (:require
-   [clj-slack-client
-    [team-state :as state]
-    [connectivity :as conn]
-    [rtm-receive :as rx]]))
+    [clj-slack-client
+     [team-state :as state]
+     [connectivity :as conn]
+     [rtm-receive :as rx]]))
 
 
 (defn connect

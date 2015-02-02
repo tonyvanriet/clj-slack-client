@@ -1,11 +1,11 @@
 (ns clj-slack-client.rtm-receive
   (:gen-class)
   (:require
-   [cheshire.core :as json]
-   [clj-slack-client
-    [team-state :as state]
-    [rtm-transmit :as tx]]
-   [manifold.stream :as stream]))
+    [cheshire.core :as json]
+    [clj-slack-client
+     [team-state :as state]
+     [rtm-transmit :as tx]]
+    [manifold.stream :as stream]))
 
 
 (def ^:dynamic *host-event-stream* nil)

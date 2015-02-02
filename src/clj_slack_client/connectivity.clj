@@ -1,10 +1,10 @@
 (ns clj-slack-client.connectivity
   (:gen-class)
   (:require
-   [cheshire.core :as json]
-   [manifold.stream :as stream]
-   [byte-streams]
-   [aleph.http :as aleph]))
+    [cheshire.core :as json]
+    [manifold.stream :as stream]
+    [byte-streams]
+    [aleph.http :as aleph]))
 
 
 (def ^:dynamic *websocket-stream* nil)
@@ -21,7 +21,7 @@
 
 
 (def ping-json
-  (json/encode {:id 1
+  (json/encode {:id   1
                 :type "ping"}))
 
 
@@ -51,10 +51,10 @@
 
 (defn call-slack-web-api
   ([method-name]
-   (call-slack-web-api method-name {}))
+    (call-slack-web-api method-name {}))
   ([method-name params]
-   (let [method-url-base (str slack-api-base-url "/" method-name)]
-     @(aleph/post method-url-base {:query-params params}))))
+    (let [method-url-base (str slack-api-base-url "/" method-name)]
+      @(aleph/post method-url-base {:query-params params}))))
 
 
 (defn call-rtm-start
@@ -71,13 +71,13 @@
 
 (defn start-real-time
   ([api-token set-team-state handle-event-json]
-   (let [response-body (call-rtm-start api-token)
-         ws-url (:url response-body)
-         ws-stream (connect-websocket-stream ws-url)]
-     (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))
-     (set-team-state response-body))
-   (start-ping)
-   (stream/consume handle-event-json *websocket-stream*)))
+    (let [response-body (call-rtm-start api-token)
+          ws-url (:url response-body)
+          ws-stream (connect-websocket-stream ws-url)]
+      (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))
+      (set-team-state response-body))
+    (start-ping)
+    (stream/consume handle-event-json *websocket-stream*)))
 
 
 (defn disconnect
