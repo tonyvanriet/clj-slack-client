@@ -4,7 +4,24 @@
     [cheshire.core :as json]
     [clj-slack-client
      [team-state :as state]
-     [connectivity :as conn]]))
+     [connectivity :as conn]]
+    [clojure.string :as str]))
+
+
+(defn linkify
+  [text]
+  (str/replace text #"U[A-Z0-9]{8}" #(str "<@" %1 ">")))
+
+
+(defn escape
+  "& replaced with &amp;
+  < replaced with &lt;
+  > replaced with &gt;"
+  [text]
+  (-> text
+      (str/replace #"\&" "&amp;")
+      (str/replace #"\<" "&lt;")
+      (str/replace #"\>" "&gt;")))
 
 
 (defn message-json
@@ -17,5 +34,9 @@
 
 (defn say-message
   [channel-id text]
-  (conn/send-to-websocket (message-json channel-id text)))
+  (->> text
+       (escape)
+       (linkify)
+       (message-json channel-id)
+       (conn/send-to-websocket)))
 
