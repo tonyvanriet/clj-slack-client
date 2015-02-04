@@ -13,6 +13,10 @@
   []
   (:self @state))
 
+(defn self-id
+  []
+  (:id (self)))
+
 
 (defn- id->user
   [id]
