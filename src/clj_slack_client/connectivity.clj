@@ -1,6 +1,7 @@
 (ns clj-slack-client.connectivity
   (:gen-class)
   (:require
+    [clj-slack-client.web :as web]
     [cheshire.core :as json]
     [manifold.stream :as stream]
     [byte-streams]
@@ -8,8 +9,6 @@
 
 
 (def ^:dynamic *websocket-stream* nil)
-
-(def slack-api-base-url "https://slack.com/api")
 
 
 (defn send-to-websocket
@@ -40,29 +39,6 @@
   (swap! heartbeating (fn [_] false)))
 
 
-(defn get-api-response
-  "Takes a full http response map and returns the api response as a map."
-  [http-response]
-  (let [response-body-bytes (:body http-response)
-        response-body-json (byte-streams/to-string response-body-bytes)
-        api-response (json/parse-string response-body-json true)]
-    api-response))
-
-
-(defn call-slack-web-api
-  ([method-name]
-    (call-slack-web-api method-name {}))
-  ([method-name params]
-    (let [method-url-base (str slack-api-base-url "/" method-name)]
-      @(aleph/post method-url-base {:query-params params}))))
-
-
-(defn call-rtm-start
-  [api-token]
-  (->> {:token api-token}
-       (call-slack-web-api "rtm.start")
-       (get-api-response)))
-
 
 (defn connect-websocket-stream
   [ws-url]
@@ -71,7 +47,7 @@
 
 (defn start-real-time
   ([api-token set-team-state handle-event-json]
-    (let [response-body (call-rtm-start api-token)
+    (let [response-body (web/rtm.start api-token)
           ws-url (:url response-body)
           ws-stream (connect-websocket-stream ws-url)]
       (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))
