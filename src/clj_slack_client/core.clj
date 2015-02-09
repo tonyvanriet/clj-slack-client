@@ -20,3 +20,10 @@
   []
   (conn/disconnect)
   (rx/close))
+
+
+(defn call-channels.setTopic
+  [api-token channel-id topic]
+  (->> {:token api-token :channel channel-id :topic topic}
+       (web/call-slack-web-api "channels.setTopic")
+       (web/get-api-response)))

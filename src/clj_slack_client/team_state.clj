@@ -33,6 +33,12 @@
        (filter #(= (:id %) id))
        (first)))
 
+(defn name->channel
+  [name]
+  (->> @state
+       :channels
+       (filter #(= (:name %) name))
+       (first)))
 
 (defn bot?
   [user-id]
