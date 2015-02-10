@@ -2,6 +2,7 @@
   (:require
    [clojure.test :refer :all]
    [clj-slack-client.connectivity :refer :all]
+   [clj-slack-client.web :refer :all]
    [manifold.stream :as stream]
    [cheshire.core :as json]))
 
@@ -10,6 +11,8 @@
                          slurp
                          clojure.string/trim))
 
+(def call-slack-web-api @#'clj-slack-client.web/call-slack-web-api)
+(def get-api-response @#'clj-slack-client.web/get-api-response)
 
 (deftest web-api-connectivity-test
 
@@ -27,7 +30,7 @@
 (deftest rtm-api-connectivity-test
 
   (testing "rtm.start response is ok"
-    (let [rtm-start-response (call-rtm-start test-api-token)]
+    (let [rtm-start-response (rtm-start test-api-token)]
       (is (:ok rtm-start-response))
 
       (testing "websocket connection is successful"
@@ -35,5 +38,4 @@
               first-event-json @(stream/take! ws-stream)
               first-event (json/parse-string first-event-json true)]
           (is (= (:type first-event) "hello")))))))
-
 

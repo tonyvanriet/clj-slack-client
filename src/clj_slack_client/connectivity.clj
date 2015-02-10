@@ -47,7 +47,7 @@
 
 (defn start-real-time
   ([api-token set-team-state handle-event-json]
-    (let [response-body (web/rtm.start api-token)
+    (let [response-body (web/rtm-start api-token)
           ws-url (:url response-body)
           ws-stream (connect-websocket-stream ws-url)]
       (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))

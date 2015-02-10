@@ -7,7 +7,7 @@
 (def slack-api-base-url "https://slack.com/api")
 
 
-(defn get-api-response
+(defn- get-api-response
   "Takes a full http response map and returns the api response as a map."
   [http-response]
   (let [response-body-bytes (:body http-response)
@@ -16,7 +16,7 @@
     api-response))
 
 
-(defn call-slack-web-api
+(defn- call-slack-web-api
   ([method-name]
     (call-slack-web-api method-name {}))
   ([method-name params]
@@ -24,14 +24,18 @@
       @(aleph/post method-url-base {:query-params params}))))
 
 
-(defn rtm.start
+(defn api-test
+  [params]
+  (call-slack-web-api "api.test" params))
+
+(defn rtm-start
   [api-token]
   (->> {:token api-token}
        (call-slack-web-api "rtm.start")
        (get-api-response)))
 
 
-(defn channels.setTopic
+(defn channels-setTopic
   [api-token channel-id topic]
   (->> {:token api-token :channel channel-id :topic topic}
        (call-slack-web-api "channels.setTopic")
