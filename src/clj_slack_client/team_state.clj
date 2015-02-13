@@ -25,6 +25,10 @@
        (filter #(= (:id %) id))
        (first)))
 
+(defn id->name
+  [id]
+  (->> (id->user id)
+       :name))
 
 (defn- id->channel
   [id]
