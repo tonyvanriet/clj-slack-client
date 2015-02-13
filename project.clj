@@ -5,5 +5,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [cheshire "5.4.0"]
-                 [aleph "0.4.0-SNAPSHOT"]
+                 [aleph "0.4.0-beta2"]
                  [byte-streams "0.2.0-alpha3"]])
