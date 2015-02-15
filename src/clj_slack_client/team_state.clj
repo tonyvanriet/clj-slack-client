@@ -30,6 +30,15 @@
   (->> (id->user id)
        :name))
 
+(defn name->id
+  [name]
+  (->> @state
+       :users
+       (filter #(= (:name %) name))
+       (first)
+       :id))
+
+
 (defn- id->channel
   [id]
   (->> @state
