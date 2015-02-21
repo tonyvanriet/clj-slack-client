@@ -35,7 +35,9 @@
 (defn say-message
   [channel-id text]
   (->> text
-       (escape)
+       ; slack says to escape messages going to the server,
+       ; but if I do, they end up double escaped in the reply.
+       #_(escape)
        (linkify)
        (message-json channel-id)
        (conn/send-to-websocket)))
