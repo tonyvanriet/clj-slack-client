@@ -17,7 +17,9 @@
   (stream/consume handler *host-event-stream*))
 
 
-(defmulti handle-event :type)
+(defn dispatch-handle-event [event] (:type event))
+
+(defmulti handle-event #'dispatch-handle-event)
 
 (defmethod handle-event "message"
   [event]
