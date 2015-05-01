@@ -1,7 +1,13 @@
 # clj-slack-client
 
-`clj-slack-client` is a Clojure library that facilitates use of the Slack Real Time Messaging and Web APIs.
+`clj-slack-client` is a Clojure client for the Slack Real Time Messaging and Web APIs.
 
+It's woefully incomplete. I've just been implementing the functionality I need to do real-time messaging in [`lunch-bot`](https://github.com/tonyvanriet/lunch-bot).
+
+The intention is to some day fill out the rest of the web API and also keep the 
+`team-state` updated as real-time events come in.
+
+Leiningen dependency: `[clj-slack-client "0.1.1-SNAPSHOT"]`
 
 ## License
 
