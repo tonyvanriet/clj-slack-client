@@ -6,7 +6,7 @@
 
 (defn set-team-state
   [state-map]
-  (swap! state (fn [_] state-map)))
+  (swap! state (constantly state-map)))
 
 
 (defn- self
