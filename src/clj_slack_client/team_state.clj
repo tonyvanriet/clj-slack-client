@@ -64,6 +64,15 @@
   (.startsWith channel-id "D"))
 
 
+(defn user-id->dm-id
+  [user-id]
+  (->> @state
+       :ims
+       (filter #(= (:user %) user-id))
+       (first)
+       :id))
+
+
 (defn channel-joined
   [channel]
   (swap! state #(assoc-in % [:channels] (conj (:channels %) channel))))
