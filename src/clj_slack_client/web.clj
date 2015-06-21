@@ -40,3 +40,12 @@
   (->> {:token api-token :channel channel-id :topic topic}
        (call-slack-web-api "channels.setTopic")
        (get-api-response)))
+
+
+(defn im-open
+  [api-token user-id]
+  (->> {:token api-token :user user-id}
+       (call-slack-web-api "im.open")
+       (get-api-response)
+       :channel
+       :id))
