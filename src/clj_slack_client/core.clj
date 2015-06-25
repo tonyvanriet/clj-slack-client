@@ -4,8 +4,7 @@
     [clj-slack-client
      [team-state :as state]
      [connectivity :as conn]
-     [rtm-receive :as rx]
-     [web :as web]]))
+     [rtm-receive :as rx]]))
 
 
 (defn connect

@@ -2,9 +2,7 @@
   (:gen-class)
   (:require
     [cheshire.core :as json]
-    [clj-slack-client
-     [team-state :as state]
-     [connectivity :as conn]]
+    [clj-slack-client.connectivity :as conn]
     [clojure.string :as str]))
 
 
