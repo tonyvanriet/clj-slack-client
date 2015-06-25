@@ -59,7 +59,8 @@
 (defn disconnect
   []
   (stop-ping)
-  (stream/close! *websocket-stream*))
+  (when *websocket-stream*
+    (stream/close! *websocket-stream*)))
 
 
 

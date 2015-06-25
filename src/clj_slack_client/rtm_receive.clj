@@ -46,5 +46,6 @@
 
 (defn close
   []
-  (stream/close! *host-event-stream*))
+  (when *host-event-stream*
+    (stream/close! *host-event-stream*)))
 
