@@ -6,4 +6,5 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [cheshire "5.4.0"]
                  [aleph "0.4.0"]
-                 [byte-streams "0.2.0"]])
+                 [byte-streams "0.2.0"]
+                 [clj-time "0.9.0"]])

@@ -4,7 +4,8 @@
     [clj-slack-client
      [team-state :as state]
      [connectivity :as conn]
-     [rtm-receive :as rx]]))
+     [rtm-receive :as rx]]
+    [clj-time.coerce :refer [to-long]]))
 
 
 (defn connect
@@ -20,3 +21,12 @@
   (conn/disconnect)
   (rx/close))
 
+
+(defn time->ts
+  "converts a joda DateTime into an approximate slack message timestamp"
+  [time]
+  (-> time
+      (to-long)
+      (/ 1000)
+      (int)
+      (str)))
