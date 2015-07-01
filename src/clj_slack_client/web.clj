@@ -18,10 +18,10 @@
 
 (defn- call-slack-web-api
   ([method-name]
-    (call-slack-web-api method-name {}))
+   (call-slack-web-api method-name {}))
   ([method-name params]
-    (let [method-url-base (str slack-api-base-url "/" method-name)]
-      @(aleph/post method-url-base {:query-params params}))))
+   (let [method-url-base (str slack-api-base-url "/" method-name)]
+     @(aleph/post method-url-base {:query-params params}))))
 
 
 (defn api-test

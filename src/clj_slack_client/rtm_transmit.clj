@@ -1,7 +1,6 @@
 (ns clj-slack-client.rtm-transmit
   (:gen-class)
   (:require
-    [cheshire.core :as json]
     [clj-slack-client.connectivity :as conn]
     [clojure.string :as str]))
 

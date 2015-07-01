@@ -53,14 +53,14 @@
 
 
 (defn start-real-time
-  ([api-token set-team-state handle-event-json]
-    (let [response-body (web/rtm-start api-token)
-          ws-url (:url response-body)
-          ws-stream (connect-websocket-stream ws-url)]
-      (alter-var-root (var *websocket-stream*) (constantly ws-stream))
-      (set-team-state response-body))
-    (start-ping)
-    (stream/consume handle-event-json *websocket-stream*)))
+  [api-token set-team-state handle-event-json]
+  (let [response-body (web/rtm-start api-token)
+        ws-url (:url response-body)
+        ws-stream (connect-websocket-stream ws-url)]
+    (alter-var-root (var *websocket-stream*) (constantly ws-stream))
+    (set-team-state response-body))
+  (start-ping)
+  (stream/consume handle-event-json *websocket-stream*))
 
 
 (defn disconnect

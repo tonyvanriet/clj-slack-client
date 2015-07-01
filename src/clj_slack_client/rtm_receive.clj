@@ -3,8 +3,7 @@
   (:require
     [cheshire.core :as json]
     [clj-slack-client
-     [team-state :as state]
-     [rtm-transmit :as tx]]
+     [team-state :as state]]
     [manifold.stream :as stream]))
 
 
