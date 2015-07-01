@@ -22,12 +22,11 @@
       (str/replace #"\>" "&gt;")))
 
 
-(defn message-json
+(defn make-text-message
   [channel-id text]
-  (json/encode {:id      1
-                :type    "message"
-                :channel channel-id
-                :text    text}))
+  {:type    "message"
+   :channel channel-id
+   :text    text})
 
 
 (defn say-message
@@ -37,6 +36,6 @@
        ; but if I do, they end up double escaped in the reply.
        #_(escape)
        (linkify)
-       (message-json channel-id)
-       (conn/send-to-websocket)))
+       (make-text-message channel-id)
+       (conn/send-message)))
 

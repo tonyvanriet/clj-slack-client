@@ -16,13 +16,22 @@
   (stream/put! *websocket-stream* data-json))
 
 
+(def message-id (atom 0))
+
+(defn send-message
+  "adds the incrementing message id to the message, converts it to json,
+  and passes it to the websocket."
+  [message]
+  (-> message
+      (assoc :id (swap! message-id inc))
+      (json/encode)
+      (send-to-websocket)))
+
+
 (def heartbeating (atom false))
 
-
-(def ping-json
-  (json/encode {:id   1
-                :type "ping"}))
-
+(def ping-message
+  {:type "ping"})
 
 (defn start-ping
   []
@@ -30,14 +39,12 @@
   (future
     (loop []
       (Thread/sleep 5000)
-      (send-to-websocket ping-json)
+      (send-message ping-message)
       (when @heartbeating (recur)))))
-
 
 (defn stop-ping
   []
   (swap! heartbeating (constantly false)))
-
 
 
 (defn connect-websocket-stream
