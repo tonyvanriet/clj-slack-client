@@ -13,7 +13,7 @@
 
 (defn attach-host-event-handler
   [handler]
-  (alter-var-root (var *host-event-stream*) (fn [_] (stream/stream 16)))
+  (alter-var-root (var *host-event-stream*) (constantly (stream/stream 16)))
   (stream/consume handler *host-event-stream*))
 
 

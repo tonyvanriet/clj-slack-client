@@ -26,7 +26,7 @@
 
 (defn start-ping
   []
-  (swap! heartbeating (fn [_] true))
+  (swap! heartbeating (constantly true))
   (future
     (loop []
       (Thread/sleep 5000)
@@ -36,7 +36,7 @@
 
 (defn stop-ping
   []
-  (swap! heartbeating (fn [_] false)))
+  (swap! heartbeating (constantly false)))
 
 
 
@@ -50,7 +50,7 @@
     (let [response-body (web/rtm-start api-token)
           ws-url (:url response-body)
           ws-stream (connect-websocket-stream ws-url)]
-      (alter-var-root (var *websocket-stream*) (fn [_] ws-stream))
+      (alter-var-root (var *websocket-stream*) (constantly ws-stream))
       (set-team-state response-body))
     (start-ping)
     (stream/consume handle-event-json *websocket-stream*)))
