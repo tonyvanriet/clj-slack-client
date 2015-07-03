@@ -8,6 +8,8 @@
   [state-map]
   (swap! state (constantly state-map)))
 
+(defn get-team-state [] @state)
+
 
 (defn- self
   []
