@@ -11,14 +11,13 @@
                          slurp
                          clojure.string/trim))
 
-(def call-slack-web-api @#'clj-slack-client.web/call-slack-web-api)
 (def get-api-response @#'clj-slack-client.web/get-api-response)
 
 (deftest web-api-connectivity-test
 
   (testing "send web api.test, receive reply"
     (let [test-args {:foo "bar", :fizz "buzz"}
-          http-response (call-slack-web-api "api.test" test-args)
+          http-response (api-test test-args)
           api-response (get-api-response http-response)]
       (is (= (:status http-response) 200))
       (is (:ok api-response))

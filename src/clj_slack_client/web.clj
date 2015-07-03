@@ -28,6 +28,7 @@
   [params]
   (call-slack-web-api "api.test" params))
 
+
 (defn rtm-start
   [api-token]
   (->> {:token api-token}
@@ -42,6 +43,16 @@
        (get-api-response)))
 
 
+(defn channels-list
+  ([api-token]
+   (channels-list api-token false))
+  ([api-token exclude-archived]
+  (->> {:token api-token :exclude_archived (if exclude-archived 1 0)}
+       (call-slack-web-api "channels.list")
+       (get-api-response)
+       :channels)))
+
+
 (defn im-open
   [api-token user-id]
   (->> {:token api-token :user user-id}
@@ -49,3 +60,37 @@
        (get-api-response)
        :channel
        :id))
+
+
+(defn groups-list
+  ([api-token]
+   (channels-list api-token false))
+  ([api-token exclude-archived]
+   (->> {:token api-token :exclude_archived (if exclude-archived 1 0)}
+        (call-slack-web-api "groups.list")
+        (get-api-response)
+        :groups)))
+
+
+(defn im-list
+  [api-token]
+  (->> {:token api-token}
+       (call-slack-web-api "im.list")
+       (get-api-response)
+       :ims))
+
+
+(defn team-info
+  [api-token]
+  (->> {:token api-token}
+       (call-slack-web-api "team.info")
+       (get-api-response)
+       :team))
+
+
+(defn users-list
+  [api-token]
+  (->> {:token api-token}
+       (call-slack-web-api "users.list")
+       (get-api-response)
+       :members))
