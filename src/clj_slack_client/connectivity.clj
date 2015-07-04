@@ -16,7 +16,7 @@
   (stream/put! *websocket-stream* data-json))
 
 
-(def message-id (atom 0))
+(def ^:private message-id (atom 0))
 
 (defn send-message
   "adds the incrementing message id to the message, converts it to json,
@@ -28,10 +28,9 @@
       (send-to-websocket)))
 
 
-(def heartbeating (atom false))
+(def ^:private heartbeating (atom false))
 
-(def ping-message
-  {:type "ping"})
+(def ping-message {:type "ping"})
 
 (defn start-ping
   []
@@ -52,15 +51,32 @@
   @(aleph/websocket-client ws-url))
 
 
+(defn handle-event
+  [event]
+  (let [event-type (:type event)]
+    (if (= event-type "pong")                               ;; todo host callback for this message-id?
+      (println "pong")                                      ;; todo track pong time
+      (println event))))
+
+
+(defn event-json->event
+  [event-json]
+  (json/parse-string event-json true))
+
+
 (defn start-real-time
-  [api-token set-team-state handle-event-json]
+  [api-token set-team-state pass-event-to-rx]
   (let [response-body (web/rtm-start api-token)
         ws-url (:url response-body)
         ws-stream (connect-websocket-stream ws-url)]
-    (alter-var-root (var *websocket-stream*) (constantly ws-stream))
-    (set-team-state response-body))
+    (set-team-state response-body)
+    (alter-var-root (var *websocket-stream*) (constantly ws-stream)))
   (start-ping)
-  (stream/consume handle-event-json *websocket-stream*))
+  (let [slack-event-stream (stream/map event-json->event *websocket-stream*)
+        conn-event-stream (stream/stream 8)]
+    (stream/connect slack-event-stream conn-event-stream)
+    (stream/consume handle-event conn-event-stream)
+    (stream/consume pass-event-to-rx slack-event-stream)))
 
 
 (defn disconnect
