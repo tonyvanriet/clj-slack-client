@@ -9,8 +9,9 @@
     [clj-time.core :as time]))
 
 
-(def ^:dynamic *websocket-stream* nil)
+(def ^:dynamic *reconnect* nil)
 
+(def ^:dynamic *websocket-stream* nil)
 
 (defn send-to-websocket
   [data-json]
@@ -41,9 +42,12 @@
   (swap! last-pong-time (constantly (time/now)))
   (future
     (loop []
-      (Thread/sleep 5000)
-      (send-message ping-message)
-      (when @heartbeating (recur)))))
+      (if (time/after? (time/now)
+                       (time/plus @last-pong-time (time/seconds 10)))
+        (*reconnect*)
+        (do (Thread/sleep 5000)
+            (send-message ping-message)
+            (when @heartbeating (recur)))))))
 
 (defn stop-ping
   []
@@ -70,7 +74,8 @@
 
 
 (defn start-real-time
-  [api-token set-team-state pass-event-to-rx]
+  [api-token set-team-state pass-event-to-rx reconnect]
+  (alter-var-root (var *reconnect*) (constantly reconnect))
   (let [response-body (web/rtm-start api-token)
         ws-url (:url response-body)
         ws-stream (connect-websocket-stream ws-url)]
