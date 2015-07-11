@@ -5,7 +5,8 @@
     [cheshire.core :as json]
     [manifold.stream :as stream]
     [byte-streams]
-    [aleph.http :as aleph]))
+    [aleph.http :as aleph]
+    [clj-time.core :as time]))
 
 
 (def ^:dynamic *websocket-stream* nil)
@@ -30,11 +31,14 @@
 
 (def ^:private heartbeating (atom false))
 
+(def ^:private last-pong-time (atom nil))
+
 (def ping-message {:type "ping"})
 
 (defn start-ping
   []
   (swap! heartbeating (constantly true))
+  (swap! last-pong-time (constantly (time/now)))
   (future
     (loop []
       (Thread/sleep 5000)
@@ -55,7 +59,8 @@
   [event]
   (let [event-type (:type event)]
     (if (= event-type "pong")                               ;; todo host callback for this message-id?
-      (println "pong")                                      ;; todo track pong time
+      (do (println "pong")
+          (swap! last-pong-time (constantly (time/now))))
       (println event))))
 
 
