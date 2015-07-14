@@ -30,7 +30,8 @@
       (send-to-websocket)))
 
 
-(def ^:private heartbeating (atom false))
+(def ^:private pinging (atom false))
+(def ^:private ping-loop (atom nil))
 
 (def ^:private last-pong-time (atom nil))
 
@@ -38,20 +39,22 @@
 
 (defn start-ping
   []
-  (swap! heartbeating (constantly true))
+  (swap! pinging (constantly true))
   (swap! last-pong-time (constantly (time/now)))
-  (future
-    (loop []
-      (if (time/after? (time/now)
-                       (time/plus @last-pong-time (time/seconds 10)))
-        (*reconnect*)
-        (do (Thread/sleep 5000)
-            (send-message ping-message)
-            (when @heartbeating (recur)))))))
+  (swap! ping-loop (constantly
+                     (future
+                       (loop []
+                         (if (time/after? (time/now)
+                                          (time/plus @last-pong-time (time/seconds 10)))
+                           (*reconnect*)
+                           (do (Thread/sleep 5000)
+                               (send-message ping-message)
+                               (when @pinging (recur)))))))))
 
 (defn stop-ping
   []
-  (swap! heartbeating (constantly false)))
+  (swap! pinging (constantly false))
+  (future-cancel @ping-loop))
 
 
 (defn connect-websocket-stream
