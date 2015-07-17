@@ -94,3 +94,10 @@
        (call-slack-web-api "users.list")
        (get-api-response)
        :members))
+
+
+(defn reactions-add
+  [api-token emoji-name channel-id timestamp]
+  (->> {:token api-token :name emoji-name :channel channel-id :timestamp timestamp}
+       (call-slack-web-api "reactions.add")
+       (get-api-response)))
