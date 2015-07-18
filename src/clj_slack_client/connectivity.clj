@@ -66,8 +66,7 @@
   [event]
   (let [event-type (:type event)]
     (if (= event-type "pong")                               ;; todo host callback for this message-id?
-      (do (println "pong")
-          (swap! last-pong-time (constantly (time/now))))
+      (swap! last-pong-time (constantly (time/now)))
       (println event))))
 
 
