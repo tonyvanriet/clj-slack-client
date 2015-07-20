@@ -101,3 +101,9 @@
   (->> {:token api-token :name emoji-name :channel channel-id :timestamp timestamp}
        (call-slack-web-api "reactions.add")
        (get-api-response)))
+
+(defn reactions-get
+  [api-token channel-id timestamp full?]
+  (->> {:token api-token :channel channel-id :timestamp timestamp :full full?}
+       (call-slack-web-api "reactions.get")
+       (get-api-response)))
