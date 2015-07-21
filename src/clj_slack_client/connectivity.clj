@@ -65,8 +65,11 @@
 (defn handle-event
   [event]
   (let [event-type (:type event)]
-    (if (= event-type "pong")                               ;; todo host callback for this message-id?
-      (swap! last-pong-time (constantly (time/now)))
+    (case event-type
+      "pong" (swap! last-pong-time (constantly (time/now))) ;; todo host callback for this message-id?
+      "team_migration_started" (*reconnect*)
+      "default")
+    (when (not= event-type "pong")
       (println event))))
 
 
