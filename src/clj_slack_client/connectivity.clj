@@ -9,6 +9,8 @@
     [clj-time.core :as time]))
 
 
+(def ^:dynamic *options* nil)
+
 (def ^:dynamic *reconnect* nil)
 
 (def ^:dynamic *websocket-stream* nil)
@@ -69,7 +71,8 @@
       "pong" (swap! last-pong-time (constantly (time/now))) ;; todo host callback for this message-id?
       "team_migration_started" (*reconnect*)
       "default")
-    (when (not= event-type "pong")
+    (when (and (*options* :log)
+               (not= event-type "pong"))
       (println event))))
 
 
@@ -79,8 +82,9 @@
 
 
 (defn start-real-time
-  [api-token set-team-state pass-event-to-rx reconnect]
+  [api-token set-team-state pass-event-to-rx reconnect options]
   (alter-var-root (var *reconnect*) (constantly reconnect))
+  (alter-var-root (var *options*) (constantly options))
   (let [response-body (web/rtm-start api-token)
         ws-url (:url response-body)
         ws-stream (connect-websocket-stream ws-url)]
