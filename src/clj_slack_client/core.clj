@@ -25,7 +25,7 @@
          reconnect (fn [] (do (when (options :log)
                                 (println "reconnecting..."))
                               (disconnect)
-                              (connect api-token host-handle-event)))]
+                              (connect api-token host-handle-event options)))]
      (stream/consume #(rx/handle-event % pass-event-to-host) rx-event-stream)
      (stream/consume host-handle-event host-event-stream)
      (conn/start-real-time api-token state/set-team-state pass-event-to-rx reconnect options))))
