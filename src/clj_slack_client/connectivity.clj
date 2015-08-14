@@ -48,7 +48,7 @@
                        (loop []
                          (if (time/after? (time/now)
                                           (time/plus @last-pong-time (time/seconds 10)))
-                           (*reconnect*)
+                           (future (*reconnect*))
                            (do (Thread/sleep 5000)
                                (send-message ping-message)
                                (when @pinging (recur)))))))))
