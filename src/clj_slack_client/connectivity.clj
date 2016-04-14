@@ -85,12 +85,12 @@
   [api-token set-team-state pass-event-to-rx reconnect options]
   (alter-var-root (var *reconnect*) (constantly reconnect))
   (alter-var-root (var *options*) (constantly options))
+  (start-ping)
   (let [response-body (web/rtm-start api-token)
         ws-url (:url response-body)
         ws-stream (connect-websocket-stream ws-url)]
     (set-team-state response-body)
     (alter-var-root (var *websocket-stream*) (constantly ws-stream)))
-  (start-ping)
   (let [slack-event-stream (stream/map event-json->event *websocket-stream*)
         conn-event-stream (stream/stream 8)]
     (stream/connect slack-event-stream conn-event-stream)
