@@ -16,16 +16,18 @@
 
 (defn connect
   ([api-token host-handle-event]
-   (connect api-token host-handle-event {:log true}))
-  ([api-token host-handle-event options]
+   (connect api-token host-handle-event nil))
+  ([api-token host-handle-event {log? :log auto-reconnect? :auto-reconnect
+                                 :or  {log? true auto-reconnect? true}
+                                 :as  options}]
    (let [rx-event-stream (stream/stream 8)
          pass-event-to-rx #(stream/put! rx-event-stream %)
          host-event-stream (stream/stream 8)
          pass-event-to-host #(stream/put! host-event-stream %)
-         reconnect (fn [] (do (when (options :log)
-                                (println "reconnecting..."))
-                              (disconnect)
-                              (connect api-token host-handle-event options)))]
+         reconnect (fn [] (when auto-reconnect?
+                            (do (when log? (println "reconnecting..."))
+                                (disconnect)
+                                (connect api-token host-handle-event options))))]
      (stream/consume #(rx/handle-event % pass-event-to-host) rx-event-stream)
      (stream/consume host-handle-event host-event-stream)
      (conn/start-real-time api-token state/set-team-state pass-event-to-rx reconnect options))))
