@@ -1,4 +1,4 @@
-(defproject clj-slack-client "0.1.5-SNAPSHOT"
+(defproject clj-slack-client "0.1.6-SNAPSHOT"
   :description "A client for Slack's RTM and Web APIs"
   :url ""
   :license {:name "Eclipse Public License"
