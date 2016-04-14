@@ -7,7 +7,7 @@ It's woefully incomplete. I've just been implementing the functionality I need t
 The intention is to some day fill out the rest of the web API and also keep the 
 `team-state` updated as real-time events come in.
 
-Leiningen dependency: `[clj-slack-client "0.1.4-SNAPSHOT"]`
+Leiningen dependency: `[clj-slack-client "0.1.5-SNAPSHOT"]`
 
 ## License
 
