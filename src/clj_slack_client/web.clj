@@ -6,7 +6,6 @@
 
 (def slack-api-base-url "https://slack.com/api")
 
-
 (defn- get-api-response
   "Takes a full http response map and returns the api response as a map."
   [http-response]
@@ -15,7 +14,6 @@
         api-response (json/parse-string response-body-json true)]
     api-response))
 
-
 (defn- call-slack-web-api
   ([method-name]
    (call-slack-web-api method-name {}))
@@ -23,6 +21,32 @@
    (let [method-url-base (str slack-api-base-url "/" method-name)]
      @(aleph/post method-url-base {:query-params params}))))
 
+(defn api-call-dispatch [m & args]
+  [(count args) (map? (first args))])
+
+; somewhat developer-friendly way to get api responses
+; without having to use thread macros
+(defmulti call-and-get-response
+  "Call a Slack web API and get the response as a map. Pass the
+  method name as the first parameter and then either the parameter
+  map or the api-token (if you don't need to use any other parameters)"
+  #'api-call-dispatch)
+
+(defmethod call-and-get-response [0 false]
+  [method-name]
+  call-and-get-response method-name {})
+
+(defmethod call-and-get-response [1 true]
+  [method-name params]
+  (->> params
+       (call-slack-web-api method-name)
+       (get-api-response)))
+
+(defmethod call-and-get-response [1 false]
+  [method-name api-tok]
+  (->> {:token api-tok}
+       (call-slack-web-api method-name)
+       (get-api-response)))
 
 (defn api-test
   [params]
