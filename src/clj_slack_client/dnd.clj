@@ -38,3 +38,24 @@
   [time-stamp response]
   (time-difference time-stamp
                    (:next_dnd_end_ts response)))
+
+; These methods require a non-bot api-token. These have been written
+; in the hopes that these methods will be accessible in the future.
+
+(defn set-snooze
+  [api-token user-id num-minutes]
+  (web/call-and-get-response
+    "dnd.setSnooze"
+    {:token api-token :num_minutes num_minutes}))
+
+(defn end-snooze
+  [api-token]
+  (web/call-and-get-response
+    "dnd.endSnooze"
+    {:token api-token}))
+
+(defn end-dnd
+  [api-token]
+  (web/call-and-get-response
+    "dnd.endDnd"
+    {:token api-token}))

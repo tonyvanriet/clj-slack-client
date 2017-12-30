@@ -39,10 +39,21 @@ DnD timer given a response from the `get-dnd-response` function. It
 takes a start timestamp and a response map. A useful way to get this
 starting timestamp is the `:ts` atom from a message sent by Slack.
 
+### `set-snooze`
+
+Starts DnD for a particular number of minutes. Needs to be called by a
+non-bot.
+
+### `end-snooze` and `end-dnd`
+
+These end the Snooze and DnD modes, or do nothing if sessions are not
+activated. These need to be called by a non-bot.
+
 ## Using `dnd` with a bot
 
 A useful way to utilize these functions for a bot is by wrapping some
-of the functions to leverage the Slack messages. The [pomodoro bot]()
+of the functions to leverage the Slack messages. The
+[pomodoro bot](https://github.com/the-mikedavis/pomodoro/blob/master/src/pomodoro/status.clj)
 has some wrappers which deal solely with messages and responses. The
 wrapper function converts the results of these API calls to strings,
 which are then sent by the bot to the asking user.
