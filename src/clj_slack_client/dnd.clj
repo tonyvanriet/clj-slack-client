@@ -46,7 +46,7 @@
   [api-token user-id num-minutes]
   (web/call-and-get-response
     "dnd.setSnooze"
-    {:token api-token :num_minutes num_minutes}))
+    {:token api-token :num_minutes num-minutes}))
 
 (defn end-snooze
   [api-token]
