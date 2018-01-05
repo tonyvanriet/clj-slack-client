@@ -8,7 +8,7 @@
   and user tokens."
   [token comment file]
   (web/call-and-get-response "files.comments.add"
-                             {:token token :comment text :file file}))
+                             {:token token :comment comment :file file}))
 
 
 (defn delete

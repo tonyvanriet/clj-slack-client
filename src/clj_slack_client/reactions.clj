@@ -10,7 +10,7 @@
   "Call the slack api"
   [method-name token options]
   (web/call-and-get-response method-name
-                             (assoc aptions :token token)))
+                             (assoc options :token token)))
 
 
 (defn add

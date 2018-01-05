@@ -7,7 +7,7 @@
   "Call the slack api"
   [method-name token options]
   (web/call-and-get-response method-name
-                             (assoc aptions :token token)))
+                             (assoc options :token token)))
 
 ; all of these methods are accessible by bots, workspaces, and users.
 ; each have extensive options available at
