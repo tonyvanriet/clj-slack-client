@@ -21,14 +21,15 @@
               :sec seconds
               :str (str minutes ":" seconds))))
 
-(defn get-user-dnd
-  "Call the Slack dnd.info method for a particular user-id."
+(defn info
+  "Retrieves a user's current Do Not Disturb status. Callable
+  by bot and user tokens."
   [api-token user-id]
   (web/call-and-get-response "dnd.info"
                              {:user user-id :token api-token}))
 
-(defn get-team-dnd
-  "Call the Slack dnd.teamInfo method for the whole team."
+(defn team-info
+  "Retrieves the Do Not Disturb status for users on a team."
   [api-token]
   (web/call-and-get-response "dnd.teamInfo" {:token api-token}))
 
