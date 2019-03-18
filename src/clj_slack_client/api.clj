@@ -1,5 +1,5 @@
 (ns clj-slack-client.api
-  (:reqire [clj-slack-client.web :as web])
+  (:require [clj-slack-client.web :as web])
   (:refer-clojure :exclude [test]))
 
 
